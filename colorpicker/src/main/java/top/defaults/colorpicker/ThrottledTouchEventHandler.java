@@ -18,7 +18,9 @@ class ThrottledTouchEventHandler {
     }
 
     void onTouchEvent(MotionEvent event) {
-        if (updatable == null) return;
+        if (updatable == null) {
+            return;
+        }
         long current = System.currentTimeMillis();
         if (current - lastPassedEventTime <= minInterval) {
             return;

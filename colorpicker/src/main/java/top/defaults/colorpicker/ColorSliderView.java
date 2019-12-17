@@ -115,8 +115,12 @@ public abstract class ColorSliderView extends View implements ColorObservable, U
     private void updateValue(float eventX) {
         float left = selectorSize;
         float right = getWidth() - selectorSize;
-        if (eventX < left) eventX = left;
-        if (eventX > right) eventX = right;
+        if (eventX < left) {
+            eventX = left;
+        }
+        if (eventX > right) {
+            eventX = right;
+        }
         currentValue = (eventX - left) / (right - left);
         invalidate();
     }

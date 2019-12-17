@@ -1,11 +1,12 @@
 package top.defaults.colorpicker;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -36,11 +37,15 @@ public class ColorWheelView extends FrameLayout implements ColorObservable, Upda
         this(context, null);
     }
 
-    public ColorWheelView(Context context, @Nullable AttributeSet attrs) {
+    public ColorWheelView(Context context,
+                          @Nullable
+                                  AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ColorWheelView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ColorWheelView(Context context,
+                          @Nullable
+                                  AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         selectorRadiusPx = SELECTOR_RADIUS_DP * getResources().getDisplayMetrics().density;
 
@@ -76,15 +81,17 @@ public class ColorWheelView extends FrameLayout implements ColorObservable, Upda
         int netWidth = w - getPaddingLeft() - getPaddingRight();
         int netHeight = h - getPaddingTop() - getPaddingBottom();
         radius = Math.min(netWidth, netHeight) * 0.5f - selectorRadiusPx;
-        if (radius < 0) return;
+        if (radius < 0) {
+            return;
+        }
         centerX = netWidth * 0.5f;
         centerY = netHeight * 0.5f;
         setColor(currentColor, false);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        Log.d("----", "进入onTouchEvent");
         int action = event.getActionMasked();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
@@ -94,8 +101,56 @@ public class ColorWheelView extends FrameLayout implements ColorObservable, Upda
             case MotionEvent.ACTION_UP:
                 update(event);
                 return true;
+            default:
+                return super.onTouchEvent(event);
         }
-        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d("----", "进入keyDown");
+        if (event != null && event.getAction() == KeyEvent.ACTION_DOWN) {
+            Log.d("----", "进入按下" + keyCode);
+            float x = currentPoint.x;
+            float y = currentPoint.y;
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                    x--;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    x++;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_UP:
+                    y--;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                    y++;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_DOWN_LEFT:
+                    x--;
+                    y--;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_DOWN_RIGHT:
+                    x++;
+                    y--;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_UP_LEFT:
+                    x--;
+                    y++;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_UP_RIGHT:
+                    x++;
+                    y++;
+                    break;
+                default:
+                    return super.onKeyDown(keyCode, event);
+            }
+            Log.d("----", "同步信息");
+            emitter.onColor(getColorAtPoint(x, y), true, true);
+            updateSelector(x, y);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

@@ -52,6 +52,7 @@ public class AlphaSliderView extends ColorSliderView {
         return Color.alpha(color) / 255.f;
     }
 
+    @Override
     protected void configurePaint(Paint colorPaint) {
         float[] hsv = new float[3];
         Color.colorToHSV(baseColor, hsv);
@@ -61,6 +62,7 @@ public class AlphaSliderView extends ColorSliderView {
         colorPaint.setShader(shader);
     }
 
+    @Override
     protected int assembleColor() {
         float[] hsv = new float[3];
         Color.colorToHSV(baseColor, hsv);

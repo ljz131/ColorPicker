@@ -8,6 +8,9 @@ import android.graphics.Shader;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
+/**
+ * @author 段弘
+ */
 public class BrightnessSliderView extends ColorSliderView {
 
     public BrightnessSliderView(Context context) {
@@ -29,6 +32,7 @@ public class BrightnessSliderView extends ColorSliderView {
         return hsv[2];
     }
 
+    @Override
     protected void configurePaint(Paint colorPaint) {
         float[] hsv = new float[3];
         Color.colorToHSV(baseColor, hsv);
@@ -40,6 +44,7 @@ public class BrightnessSliderView extends ColorSliderView {
         colorPaint.setShader(shader);
     }
 
+    @Override
     protected int assembleColor() {
         float[] hsv = new float[3];
         Color.colorToHSV(baseColor, hsv);

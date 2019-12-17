@@ -39,7 +39,9 @@ public class ColorWheelPalette extends View {
         int netWidth = w - getPaddingLeft() - getPaddingRight();
         int netHeight = h - getPaddingTop() - getPaddingBottom();
         radius = Math.min(netWidth, netHeight) * 0.5f;
-        if (radius < 0) return;
+        if (radius < 0) {
+            return;
+        }
         centerX = w * 0.5f;
         centerY = h * 0.5f;
 
