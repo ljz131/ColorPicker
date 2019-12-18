@@ -22,6 +22,8 @@ public class ColorWheelView extends FrameLayout implements ColorObservable, Upda
     private float centerX;
     private float centerY;
 
+    private boolean isOnControl = false;
+
     private float selectorRadiusPx = SELECTOR_RADIUS_DP * 3;
 
     private PointF currentPoint = new PointF();
@@ -113,42 +115,50 @@ public class ColorWheelView extends FrameLayout implements ColorObservable, Upda
             Log.d("----", "进入按下" + keyCode);
             float x = currentPoint.x;
             float y = currentPoint.y;
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_DPAD_LEFT:
-                    x--;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_RIGHT:
-                    x++;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_UP:
-                    y--;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_DOWN:
-                    y++;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_DOWN_LEFT:
-                    x--;
-                    y--;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_DOWN_RIGHT:
-                    x++;
-                    y--;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_UP_LEFT:
-                    x--;
-                    y++;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_UP_RIGHT:
-                    x++;
-                    y++;
-                    break;
-                default:
-                    return super.onKeyDown(keyCode, event);
+            if (isOnControl) {
+                switch (keyCode) {
+                    case KeyEvent.KEYCODE_DPAD_LEFT:
+                        x--;
+                        break;
+                    case KeyEvent.KEYCODE_DPAD_RIGHT:
+                        x++;
+                        break;
+                    case KeyEvent.KEYCODE_DPAD_UP:
+                        y--;
+                        break;
+                    case KeyEvent.KEYCODE_DPAD_DOWN:
+                        y++;
+                        break;
+                    case KeyEvent.KEYCODE_DPAD_DOWN_LEFT:
+                        x--;
+                        y--;
+                        break;
+                    case KeyEvent.KEYCODE_DPAD_DOWN_RIGHT:
+                        x++;
+                        y--;
+                        break;
+                    case KeyEvent.KEYCODE_DPAD_UP_LEFT:
+                        x--;
+                        y++;
+                        break;
+                    case KeyEvent.KEYCODE_DPAD_UP_RIGHT:
+                        x++;
+                        y++;
+                        break;
+                    case KeyEvent.KEYCODE_BACK:
+                        isOnControl = false;
+                        break;
+                    default:
+                        return super.onKeyDown(keyCode, event);
+                }
+                Log.d("----", "同步信息");
+                emitter.onColor(getColorAtPoint(x, y), true, true);
+                updateSelector(x, y);
+                return true;
+            } else if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+                isOnControl = true;
+                return true;
             }
-            Log.d("----", "同步信息");
-            emitter.onColor(getColorAtPoint(x, y), true, true);
-            updateSelector(x, y);
-            return true;
         }
         return super.onKeyDown(keyCode, event);
     }

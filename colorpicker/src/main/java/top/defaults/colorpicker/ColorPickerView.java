@@ -46,7 +46,7 @@ public class ColorPickerView extends LinearLayout implements ColorObservable {
 
         colorWheelView = new ColorWheelView(context);
         colorWheelView.setFocusable(true);
-        colorWheelView.setBackgroundResource(R.drawable.selector_red_btn_2019ver);
+        colorWheelView.setBackgroundResource(R.drawable.selector_red_btn_border_2019ver);
         float density = getResources().getDisplayMetrics().density;
         int margin = (int) (8 * density);
         sliderMargin = 2 * margin;
