@@ -8,6 +8,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -36,6 +38,9 @@ public abstract class ColorSliderView extends View implements ColorObservable, U
 
     public ColorSliderView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setBackgroundResource(R.drawable.selector_red_btn_border_2019ver);
+        setFocusable(true);
+        setPadding(6, 6, 6, 6);
         colorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         borderPaint.setStyle(Paint.Style.STROKE);
@@ -46,6 +51,7 @@ public abstract class ColorSliderView extends View implements ColorObservable, U
         selectorPath = new Path();
         selectorPath.setFillType(Path.FillType.WINDING);
     }
+
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -62,9 +68,9 @@ public abstract class ColorSliderView extends View implements ColorObservable, U
     protected void onDraw(Canvas canvas) {
         float width = getWidth();
         float height = getHeight();
-        canvas.drawRect(selectorSize, selectorSize, width - selectorSize, height, colorPaint);
-        canvas.drawRect(selectorSize, selectorSize, width - selectorSize, height, borderPaint);
-        selectorPath.offset(currentValue * (width - 2 * selectorSize), 0, currentSelectorPath);
+        canvas.drawRect(selectorSize + getPaddingLeft(), selectorSize + getPaddingTop(), width - selectorSize - getPaddingRight(), height - getPaddingBottom() - selectorSize, colorPaint);
+        canvas.drawRect(selectorSize + getPaddingLeft(), selectorSize + getPaddingTop(), width - selectorSize - getPaddingRight(), height - getPaddingBottom() - selectorSize, borderPaint);
+        selectorPath.offset(getPaddingLeft() + currentValue * (width - 2 * selectorSize - getPaddingLeft() - getPaddingRight()), getPaddingTop(), currentSelectorPath);
         canvas.drawPath(currentSelectorPath, selectorPaint);
     }
 
@@ -80,8 +86,37 @@ public abstract class ColorSliderView extends View implements ColorObservable, U
             case MotionEvent.ACTION_UP:
                 update(event);
                 return true;
+            default:
+                return super.onTouchEvent(event);
         }
-        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event != null && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                currentValue -= 0.005f;
+            } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                currentValue += 0.005f;
+                onKeyLongPress(keyCode,event);
+            } else {
+                return super.onKeyDown(keyCode, event);
+            }
+            updateCurrentValue();
+            return true;
+        } else {
+            if (event == null) {
+                Log.e("----", "夭寿了，event居然是空");
+            } else {
+                Log.e("----", "夭寿了，action居然拦截出问题了" + event.getAction());
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        Log.e("----", "夭寿了，触发长按");
+        return super.onKeyLongPress(keyCode, event);
     }
 
     @Override
@@ -112,9 +147,20 @@ public abstract class ColorSliderView extends View implements ColorObservable, U
         invalidate();
     }
 
+    private void updateCurrentValue() {
+        if (currentValue > 1f) {
+            currentValue = 1f;
+        }
+        if (currentValue < 0) {
+            currentValue = 0;
+        }
+        emitter.onColor(assembleColor(), true, true);
+        invalidate();
+    }
+
     private void updateValue(float eventX) {
-        float left = selectorSize;
-        float right = getWidth() - selectorSize;
+        float left = getPaddingLeft() + selectorSize;
+        float right = getWidth() - getPaddingRight() - selectorSize;
         if (eventX < left) {
             eventX = left;
         }
