@@ -17,6 +17,9 @@ public class ColorWheelSelector extends View {
     private float selectorRadiusPx = SELECTOR_RADIUS_DP * 3;
     private PointF currentPoint = new PointF();
 
+    private Paint previewCirclePaint;
+    private int color = Color.parseColor("#FFFFFF");
+
     public ColorWheelSelector(Context context) {
         this(context, null);
     }
@@ -27,28 +30,39 @@ public class ColorWheelSelector extends View {
 
     public ColorWheelSelector(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
         selectorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         selectorPaint.setColor(Color.BLACK);
         selectorPaint.setStyle(Paint.Style.STROKE);
         selectorPaint.setStrokeWidth(2);
+
+        previewCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        previewCirclePaint.setStyle(Paint.Style.FILL);
+        previewCirclePaint.setColor(color);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawLine(currentPoint.x - selectorRadiusPx, currentPoint.y,
-                currentPoint.x + selectorRadiusPx, currentPoint.y, selectorPaint);
-        canvas.drawLine(currentPoint.x, currentPoint.y - selectorRadiusPx,
-                currentPoint.x, currentPoint.y + selectorRadiusPx, selectorPaint);
+//        canvas.drawLine(currentPoint.x - selectorRadiusPx, currentPoint.y,
+//                currentPoint.x + selectorRadiusPx, currentPoint.y, selectorPaint);
+//        canvas.drawLine(currentPoint.x, currentPoint.y - selectorRadiusPx,
+//                currentPoint.x, currentPoint.y + selectorRadiusPx, selectorPaint);
         canvas.drawCircle(currentPoint.x, currentPoint.y, selectorRadiusPx * 0.66f, selectorPaint);
+        canvas.drawCircle(currentPoint.x, currentPoint.y, selectorRadiusPx * 0.66f, previewCirclePaint);
     }
 
     public void setSelectorRadiusPx(float selectorRadiusPx) {
         this.selectorRadiusPx = selectorRadiusPx;
     }
 
-    public void setCurrentPoint(PointF currentPoint) {
+    public void setColor(int color) {
+        this.color = color;
+        previewCirclePaint.setColor(color);
+        invalidate();
+    }
+
+    public void setCurrentPoint(PointF currentPoint, int color) {
         this.currentPoint = currentPoint;
+        previewCirclePaint.setColor(color);
         invalidate();
     }
 }

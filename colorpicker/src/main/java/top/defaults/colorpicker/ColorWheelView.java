@@ -210,7 +210,7 @@ public class ColorWheelView extends FrameLayout implements ColorObservable, Upda
         }
         currentPoint.x = x + centerX;
         currentPoint.y = y + centerY;
-        selector.setCurrentPoint(currentPoint);
+        selector.setCurrentPoint(currentPoint,getColorAtPoint(currentPoint.x,currentPoint.y));
     }
 
     @Override
