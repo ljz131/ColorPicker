@@ -22,7 +22,7 @@ class ColorWheelSelector @JvmOverloads constructor(context: Context?, attrs: Att
 
         selectorColorPreviewCirclePaint.style = Paint.Style.FILL
         selectorColorPreviewCirclePaint.color = color
-        selectorColorPreviewCirclePaint.setShadowLayer(100f, 5f, 5f, Color.GRAY)
+        selectorColorPreviewCirclePaint.setShadowLayer(10f, 5f, 5f, Color.BLACK)
 
         selectorBorderPaint.color = Color.BLACK
         selectorBorderPaint.style = Paint.Style.STROKE
