@@ -10,30 +10,48 @@ import android.view.View
 
 class ColorWheelSelector @JvmOverloads constructor(context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(
         context, attrs, defStyleAttr) {
-    private val selectorPaint: Paint
+    private val selectorBorderPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val selectorColorPreviewCirclePaint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var selectorRadiusPx: Float = Constants.SELECTOR_RADIUS_DP * 3.toFloat()
     private var currentPoint = PointF()
+
+    private var color:Int = Color.parseColor("#FFFFFF")
+
+    init {
+        setLayerType(LAYER_TYPE_SOFTWARE, null)
+
+        selectorColorPreviewCirclePaint.style = Paint.Style.FILL
+        selectorColorPreviewCirclePaint.color = color
+        selectorColorPreviewCirclePaint.setShadowLayer(100f, 5f, 5f, Color.GRAY)
+
+        selectorBorderPaint.color = Color.BLACK
+        selectorBorderPaint.style = Paint.Style.STROKE
+        selectorBorderPaint.strokeWidth = 2f
+    }
+
     override fun onDraw(canvas: Canvas) {
-        canvas.drawLine(currentPoint.x - selectorRadiusPx, currentPoint.y,
-                currentPoint.x + selectorRadiusPx, currentPoint.y, selectorPaint)
-        canvas.drawLine(currentPoint.x, currentPoint.y - selectorRadiusPx, currentPoint.x,
-                currentPoint.y + selectorRadiusPx, selectorPaint)
-        canvas.drawCircle(currentPoint.x, currentPoint.y, selectorRadiusPx * 0.66f, selectorPaint)
+        //        canvas.drawLine(currentPoint.x - selectorRadiusPx, currentPoint.y,
+        //                currentPoint.x + selectorRadiusPx, currentPoint.y, selectorPaint)
+        //        canvas.drawLine(currentPoint.x, currentPoint.y - selectorRadiusPx, currentPoint.x,
+        //                currentPoint.y + selectorRadiusPx, selectorPaint)
+        canvas.drawCircle(currentPoint.x, currentPoint.y, selectorRadiusPx * 0.66f, selectorBorderPaint)
+        canvas.drawCircle(currentPoint.x, currentPoint.y, selectorRadiusPx * 0.66f, selectorColorPreviewCirclePaint)
     }
 
-    fun setSelectorRadiusPx(selectorRadiusPx: Float) {
-        this.selectorRadiusPx = selectorRadiusPx
-    }
-
-    fun setCurrentPoint(currentPoint: PointF) {
-        this.currentPoint = currentPoint
+    fun setColor(color: Int) {
+        this.color = color
+        selectorColorPreviewCirclePaint.color = color
         invalidate()
     }
 
-    init {
-        selectorPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        selectorPaint.color = Color.BLACK
-        selectorPaint.style = Paint.Style.STROKE
-        selectorPaint.strokeWidth = 2f
+    fun setSelectorRadiusPx(radius: Float) {
+        selectorRadiusPx = radius
+        invalidate()
+    }
+
+    fun setCurrentPoint(currentPoint: PointF?, color: Int) {
+        this.currentPoint = currentPoint!!
+        selectorColorPreviewCirclePaint.color = color
+        invalidate()
     }
 }

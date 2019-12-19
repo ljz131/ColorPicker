@@ -169,7 +169,7 @@ class ColorWheelView @JvmOverloads constructor(context: Context, attrs: Attribut
         }
         currentPoint.x = x + centerX
         currentPoint.y = y + centerY
-        selector.setCurrentPoint(currentPoint)
+        selector.setCurrentPoint(currentPoint, getColorAtPoint(currentPoint.x, currentPoint.y))
     }
 
     override fun subscribe(observer: ColorObserver?) {
